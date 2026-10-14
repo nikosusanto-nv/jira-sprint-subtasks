@@ -8,7 +8,7 @@ Creates default subtasks for tickets in the active Jira sprint that don't have a
 | Title has `[FE]`, not a spike | `[FE] Implementation` |
 | Title has `[BE]`, spike | `[BE] Investigation` |
 | Title has `[FE]`, spike | `[FE] Investigation` |
-| QA Estimate is set | `[QA] Execute testing` |
+| Title has `[QA]` or QA Estimate is set | `[QA] Execute testing` (once) |
 
 Tickets that already have subtasks are skipped, so it's safe to re-run.
 

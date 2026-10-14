@@ -4,7 +4,7 @@
 Rules (per parent ticket with no subtasks):
   - Not a spike: [BE] in title -> "[BE] Implementation", [FE] -> "[FE] Implementation"
   - Spike:       [BE] in title -> "[BE] Investigation",  [FE] -> "[FE] Investigation"
-  - QA Estimate set           -> "[QA] Execute testing"
+  - [QA] in title or QA Estimate set -> "[QA] Execute testing"
 
 Usage:
   export JIRA_TOKEN=<personal access token>   # Jira profile > Personal Access Tokens
@@ -60,7 +60,7 @@ def subtasks_for(fields):
     spike = "spike" in fields["issuetype"]["name"].lower()
     suffix = "Investigation" if spike else "Implementation"
     subs = [f"{tag} {suffix}" for tag in ("[BE]", "[FE]") if tag in title]
-    if fields.get(QA_ESTIMATE_FIELD) is not None:
+    if "[QA]" in title or fields.get(QA_ESTIMATE_FIELD) is not None:
         subs.append("[QA] Execute testing")
     return subs
 
