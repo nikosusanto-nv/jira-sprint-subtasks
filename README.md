@@ -47,6 +47,21 @@ To replace the token later, delete the old `export JIRA_TOKEN=...` line from `~/
 python3 create_sprint_subtasks.py --dry-run    # preview
 python3 create_sprint_subtasks.py              # create subtasks in the active sprint
 python3 create_sprint_subtasks.py --sprint ID  # target a specific sprint
+python3 create_sprint_subtasks.py --only-new-sprint  # skip unless the active sprint started today
 ```
 
 Board, project and field IDs are constants at the top of the script.
+
+## Run automatically (macOS)
+
+Sprint planning is every other Wednesday, and the new sprint is usually started in Jira late afternoon. The installer adds a launchd job that runs every **Wednesday at 17:00 and 18:00** (your Mac's local time) with `--only-new-sprint`: it acts only if the active sprint started today, so the 17:00 run catches an early start, 18:00 is the fallback, and off-weeks are skipped.
+
+```bash
+./install-schedule.sh             # install or update
+./install-schedule.sh uninstall   # remove
+```
+
+- The job reads `JIRA_TOKEN` from `~/.zshrc`, so complete the setup above first.
+- Output goes to `~/Library/Logs/jira-sprint-subtasks.log`.
+- Your Mac needs to be on. If it's asleep at run time, launchd runs the job when it wakes.
+- Re-run the installer if you move this folder or change Python versions.

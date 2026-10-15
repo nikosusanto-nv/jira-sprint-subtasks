@@ -19,6 +19,7 @@ import sys
 import urllib.parse
 import urllib.error
 import urllib.request
+from datetime import date, datetime
 
 JIRA = "https://jira.ninjavan.net"
 BOARD_ID = 220
@@ -69,12 +70,24 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true", help="show what would be created")
     parser.add_argument("--sprint", type=int, help="sprint id (default: active sprint)")
+    parser.add_argument("--only-new-sprint", action="store_true",
+                        help="do nothing unless the active sprint started today (for scheduled runs)")
     args = parser.parse_args()
 
     if "JIRA_TOKEN" not in os.environ:
         sys.exit("Set JIRA_TOKEN to a Jira personal access token")
 
-    sprint_id = args.sprint or active_sprint()["id"]
+    if args.sprint:
+        sprint_id = args.sprint
+    else:
+        sprint = active_sprint()
+        sprint_id = sprint["id"]
+        if args.only_new_sprint:
+            started = datetime.fromisoformat(sprint["startDate"].replace("Z", "+00:00"))
+            if started.astimezone().date() != date.today():
+                print(f"{datetime.now():%Y-%m-%d %H:%M} {sprint['name']} started "
+                      f"{started.astimezone():%Y-%m-%d}, not today; skipping")
+                return
     jql = f"sprint = {sprint_id} AND issuetype not in subTaskIssueTypes() ORDER BY key"
     query = urllib.parse.urlencode({
         "jql": jql,
